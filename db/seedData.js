@@ -136,7 +136,7 @@ async function createInitialReviews() {
             title: 'Thorough review of Netflix', 
             content: 'I love the clear layout of all the shows and movies. It is easy to navigate and find something to watch.', 
             rating: 4,  
-            date: 2023-9-13
+            date: '2023-09-13'
         },
         
         {
@@ -146,7 +146,7 @@ async function createInitialReviews() {
             title: 'My thoughts on Discord', 
             content: 'I like how I can play games with my friends with the option to live stream while on call.', 
             rating: 4,  
-            date: 2023-4-20
+            date: '2023-04-20'
         },
 
         {
@@ -156,7 +156,7 @@ async function createInitialReviews() {
             title: 'How I feel about the new Twitter update', 
             content: 'It took some time for me to get used to and I will still be calling it Twitter.', 
             rating: 3,  
-            date: 2023-6-17
+            date: '2023-06-17'
         },
 
         {
@@ -166,7 +166,7 @@ async function createInitialReviews() {
             title: 'Thoughts after using Slack', 
             content: 'I thought it was pretty easy to use as a first time user. Love how more companies are using it as their communication platform.', 
             rating: 5,  
-            date: 2023-8-25
+            date: '2023-08-25'
         },
       ]
       const reviews = await Promise.all(reviewsToCreate.map(createReview));
