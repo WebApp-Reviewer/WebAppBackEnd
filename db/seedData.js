@@ -9,6 +9,7 @@ async function dropTables() {
         await client.query(`
         DROP TABLE IF EXISTS reviews;
         DROP TABLE IF EXISTS website;
+        DROP TABLE IF EXISTS admin;
         DROP TABLE IF EXISTS users;
         `)
     } catch (error) {
@@ -20,33 +21,39 @@ async function createTables() {
     try {
         console.log("Starting to build tables...");
         //create tables in correct order
-        //figure out secret key logic
         await client.query(`
         CREATE TABLES users(
             id SERIAL PRIMARY KEY,
             username VARCHAR(255) UNIQUE NOT NULL,
-            email VARCHAR(255) UNIQUE NOT NULL,
-            role VARCHAR(225) NOT NULL,
-            password VARCHAR(255) NOT NULL,
-            secretKey INTEGER
+            password VARCHAR(255) NOT NULL, 
         );
         `)
 
         await client.query(`
-        CREATE TABLES website(
+        CREATE TABLES admins(
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(255) UNIQUE NOT NULL,
+            password VARCHAR(255) NOT NULL, 
+            secretKey VARCHAR(225) NOT NULL
+        );
+        `)
+
+        await client.query(`
+        CREATE TABLES websites(
             id SERIAL PRIMARY KEY
             name VARCHAR(255) NOT NULL,
             url VARCHAR(225) UNIQUE NOT NULL,
-            description VARCHAR(225) NOT NULL
+            description VARCHAR(225) NOT NULL,
+            image VARCHAR(225) NOT NULL
         )
         `)
 
         await client.query(`
         CREATE TABLES reviews(
             id SERIAL PRIMARY KEY,
-            websiteId INTEGER UNIQUR NOT NULL,
+            websiteId INTEGER UNIQUE NOT NULL,
             userId INTEGER UNIQUE NOT NULL,
-            title VARCHAR(225) NOT NULL,
+            name VARCHAR(225) NOT NULL,
             content VARCHAR(225) NOT NULL,
             rating INTEGER NOT NULL,
             date DATE NOT NULL
@@ -79,6 +86,23 @@ async function createInitialUsers() {
     }
 }
 
+async function createInitialAdmin() {
+    console.log('Creating admin...');
+    try {
+        const adminToCreate = [
+            { username: 'admin', password: 'AdminAccess' },
+        ]
+        const users = await Promise.all(adminToCreate.map(createAdmin));
+
+        console.log('Admin created:');
+        console.log(admin);
+        console.log('Finished creating admin!');
+    } catch (error) {
+        console.error('Error creating admin!');
+        throw error;
+    }
+}
+
 async function createInitialWebsites() {
     try {
         console.log('Creating initial websites...');
@@ -88,28 +112,32 @@ async function createInitialWebsites() {
                 id: 1,
                 name: 'Netflix',
                 url: 'https://www.netflix.com/',
-                description: 'Streaming platform to watch movies and shows online.'
+                description: 'Streaming platform to watch movies and shows online.',
+                image: 'https://yt3.googleusercontent.com/ytc/AOPolaSbaST1JBNd9phht_n7tFN-VHx0FlvKPHeSDnmu4Q=s900-c-k-c0x00ffffff-no-rj'
             },
 
             {
                 id: 2, 
                 name: 'Discord',
                 url: 'https://discord.com/',
-                description: 'Your place to talk and hangout.'
+                description: 'Your place to talk and hangout.',
+                image: 'https://play-lh.googleusercontent.com/0oO5sAneb9lJP6l8c6DH4aj6f85qNpplQVHmPmbbBxAukDnlO7DarDW0b-kEIHa8SQ'
             },
 
             {
                 id: 3,
                 name: 'Twitter',
                 url: 'https://twitter.com/',
-                description: 'From breaking news and entertainment to sports and politics, get the full story with all the live commentary.'
+                description: 'From breaking news and entertainment to sports and politics, get the full story with all the live commentary.',
+                image: 'https://cdn-icons-png.flaticon.com/512/124/124021.png'
             },
 
             {
                 id: 4,
                 name: 'Slack',
                 url: 'https://slack.com/',
-                description: 'Work more easily with everyone.'
+                description: 'Work more easily with everyone.',
+                image: 'https://yt3.googleusercontent.com/ytc/AOPolaTCsMhpgrJldSw0eABzVJ9JEc1pYyTST4CJ7JzN1Q=s900-c-k-c0x00ffffff-no-rj'
             }
         ]
         const websites = await Promise.all(websitesToCreate.map(createWebsite));
@@ -133,7 +161,7 @@ async function createInitialReviews() {
             id: 1, 
             websiteId: 1, 
             userId: 1, 
-            title: 'Thorough review of Netflix', 
+            name: 'Thorough review of Netflix', 
             content: 'I love the clear layout of all the shows and movies. It is easy to navigate and find something to watch.', 
             rating: 4,  
             date: '2023-09-13'
@@ -143,7 +171,7 @@ async function createInitialReviews() {
             id: 2, 
             websiteId: 2, 
             userId: 2, 
-            title: 'My thoughts on Discord', 
+            name: 'My thoughts on Discord', 
             content: 'I like how I can play games with my friends with the option to live stream while on call.', 
             rating: 4,  
             date: '2023-04-20'
@@ -153,7 +181,7 @@ async function createInitialReviews() {
             id: 3, 
             websiteId: 3, 
             userId: 3, 
-            title: 'How I feel about the new Twitter update', 
+            name: 'How I feel about the new Twitter update', 
             content: 'It took some time for me to get used to and I will still be calling it Twitter.', 
             rating: 3,  
             date: '2023-06-17'
@@ -163,7 +191,7 @@ async function createInitialReviews() {
             id: 4, 
             websiteId: 4, 
             userId: 4, 
-            title: 'Thoughts after using Slack', 
+            name: 'Thoughts after using Slack', 
             content: 'I thought it was pretty easy to use as a first time user. Love how more companies are using it as their communication platform.', 
             rating: 5,  
             date: '2023-08-25'
@@ -187,6 +215,7 @@ async function rebuildDB() {
       await dropTables();
       await createTables();
       await createInitialUsers();
+      await createInitialAdmin();
       await createInitialWebsites();
       await createInitialReviews();
     } catch (error) {

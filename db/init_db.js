@@ -1,4 +1,4 @@
-const {
+/*const {
   client,
   // declare your model imports here
   // for example, User
@@ -29,4 +29,4 @@ async function populateInitialData() {
 buildTables()
   .then(populateInitialData)
   .catch(console.error)
-  .finally(() => client.end());
+.finally(() => client.end());*/
